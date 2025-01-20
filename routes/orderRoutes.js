@@ -40,7 +40,7 @@ router.post('/', async (req, res) => {
     });
 
     // Validate required fields
-    if (!userId || !totalPrice || !deliveryType || !scheduledTime) {
+    if (!userId || !totalPrice ) {
       console.error('Validation Error: Missing required fields.');
       return res.status(400).json({ error: 'Missing required fields: userId, totalPrice, deliveryType, or scheduledTime.' });
     }

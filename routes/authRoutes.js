@@ -112,11 +112,7 @@ router.post('/register', async (req, res) => {
         name,
         email,
         password,
-        contacts: contacts?.map(contact => ({
-          phone: contact.phone,
-          address: contact.address || null,
-          isDefault: contact.isDefault || false,
-        })) || [],
+        
       });
   
       await user.save();
