@@ -6,7 +6,7 @@ const Topping = require('./models/Topping');
 const express = require('express');
 const app = express();
 
-mongoose.connect('mongodb://localhost:27017/pizza_store', {
+mongoose.connect('mongodb+srv://srilakshmipasupuleti:sri123@cluster0.qilmkdx.mongodb.net/pizza_store', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 }).then(() => console.log('MongoDB connected')).catch(err => console.error(err));
