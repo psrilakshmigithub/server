@@ -43,12 +43,24 @@ const orderSchema = new mongoose.Schema({
   },
   deliveryType: {
     type: String, // 'pickup' or 'delivery'
-    enum: ['pickup', 'delivery']
-    
+    enum: ['pickup', 'delivery'],
   },
   contactInfo: {
     phone: { type: String, required: false },
     address: { type: String, required: false },
+  },
+  scheduledTime: {
+    type: Date, // Date and time for scheduled orders
+    required: false, // Optional field
+  },
+  specialInstructions: {
+    type: String, // Any special instructions for the order
+    required: false,
+    maxlength: 500, // Limit the length of instructions
+  },
+  tip: {
+    type: Number, // Tip amount added by the user
+    default: 0,
   },
   status: {
     type: String,

@@ -4,6 +4,39 @@ const Product = require('../models/Product');
 
 const router = express.Router();
 
+router.post('/cart/checkout', async (req, res) => {
+  try {
+    const { userId, paymentDetails } = req.body;
+
+    const cart = await Cart.findOne({ userId, status: 'active' }).populate('items.orderId');
+    if (!cart) {
+      return res.status(404).json({ error: 'No active cart found.' });
+    }
+
+    // Process payment (use Stripe or another payment gateway)
+    const paymentSuccess = await processPayment(cart.totalPrice, paymentDetails);
+    if (!paymentSuccess) {
+      return res.status(400).json({ error: 'Payment failed.' });
+    }
+
+    // Mark the cart as completed
+    cart.status = 'completed';
+    await cart.save();
+
+    // Update the status of all orders in the cart
+    await Order.updateMany(
+      { _id: { $in: cart.items.map((item) => item.orderId._id) } },
+      { $set: { status: 'completed' } }
+    );
+
+    res.status(200).json({ message: 'Checkout successful!', cart });
+  } catch (error) {
+    console.error('Error during checkout:', error.message);
+    res.status(500).json({ error: 'Checkout failed.' });
+  }
+});
+
+
 // Get cart by user ID
 router.get('/:userId', async (req, res) => {
   try {

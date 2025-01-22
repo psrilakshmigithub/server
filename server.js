@@ -14,6 +14,7 @@ const productRoutes = require('./routes/products');
 const toppingsRoute = require('./routes/toppings');
 const beveragesRoutes = require('./routes/beverageRoutes.js');
 const userRoutes = require('./routes/userRoutes.js');
+const paymentRoutes = require('./routes/paymentRoutes.js');
 const app = express();
 
 app.use(express.json());
@@ -41,6 +42,7 @@ app.use('/api/beverages', beveragesRoutes);
 app.use('/api/toppings', toppingsRoute);
 app.use('/api/auth', authRoutes);
 app.use('/api/user', userRoutes);
+app.use('/api/payment', paymentRoutes);
 
 const PORT = 5000;
 
