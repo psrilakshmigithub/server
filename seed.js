@@ -44,10 +44,10 @@ const products = [
     name: 'Wings',
     category: 'Wings',
     price: 23.99,
-    image: '/images/mild_wings.jpg',
+    image: '/images/spicy_wings.jpg',
     details: {
-      sizes: ['10 pcs', '25 pcs', '50 pcs'],
-      Flavors: ['Mild', 'Hot', 'Medium', 'Honey Garlic'],
+      sizes: ['10 pcs', '25 pcs', '50 pcs'],   
+      wingsFlavors: ['Mild', 'Hot', 'Medium', 'Honey Garlic'],
     },
   },
   
@@ -55,7 +55,7 @@ const products = [
   name: 'Pizza & Wings Combo',
   category: 'Combos',
   price: 25.99,
-  image: '/images/medium_combo.jpg',
+  image: '/images/large_pizza_combo.jpg',
   details: {
     pizzas: 1,
     wingsFlavors: ['Mild', 'Hot', 'Medium', 'Honey Garlic'],
@@ -83,7 +83,7 @@ const products = [
     name: 'Two Pizzas Family Combo',
     category: 'FamilyCombos',
     price: 39.99,
-    image: '/images/medium_combo.jpg',
+    image: '/images/family_combo.jpg',
     details: {
       pizzas: 2,
       wingsFlavors: ['Mild', 'Hot','Medium', 'Honey Garlic'],
@@ -153,7 +153,7 @@ const products = [
     name: 'Panzerotte',
     category: 'Panzerotte',
     price: 13.99,
-    image: '/images/cheese_panzerotte.jpg',
+    image: '/images/panzerotti.jpg',
     details: {      
       Flavors: ['Cheese', 'Classic'],
       toppingsPerPizza: 3,
@@ -180,28 +180,28 @@ const products = [
     name: 'Root Beer',
     category: 'Beverages',
     price: 1.99,
-    image: '/images/sprite.jpg',
+    image: '/images/aw.jpg',
     details: {},
   }, 
   {
     name: 'Pepsi',
     category: 'Beverages',
     price: 1.99,
-    image: '/images/sprite.jpg',
+    image: '/images/pepsi.jpg',
     details: {},
   }, 
   {
     name: 'Diet Coke',
     category: 'Beverages',
     price: 1.99,
-    image: '/images/sprite.jpg',
+    image: '/images/Diet-Coke-Can.jpg',
     details: {},
   }, 
   {
     name: 'Diet Pepsi',
     category: 'Beverages',
     price: 1.99,
-    image: '/images/sprite.jpg',
+    image: '/images/diet_pepsi.jpg',
     details: {},
   }, 
   
@@ -217,7 +217,7 @@ const products = [
     name: 'Sides',
     category: 'Sides',
     price: 4.99,
-    image: '/images/potato_wedges.jpg',
+    image: '/images/sides.jpg',
     details: {
       Flavors: ['Garlic Bread', 'Potato Wedges'],
     },

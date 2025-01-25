@@ -6,7 +6,7 @@ const stripe = require('stripe')('sk_test_51QjvRCBpoKRfd7wJLjZzoIYDXy2zf8qEL1QuE
 // Create a Payment Intent
 router.post('/create-payment-intent', async (req, res) => {
   try {
-    const { amount, userId, currency = 'usd' } = req.body;
+    const { amount, userId, currency} = req.body;
 
     if (!amount || !userId) {
       return res.status(400).json({ error: 'Amount and user ID are required.' });
@@ -17,11 +17,13 @@ router.post('/create-payment-intent', async (req, res) => {
       currency,
       metadata: { userId },
     });
-
-    res.status(201).json({ clientSecret: paymentIntent.client_secret });
+    console.log('Payment Intent Response:', paymentIntent);
+      
+    res.status(201).json({ clientSecret: paymentIntent.client_secret });     
+    console.log('Payment clientSecret Response:', paymentIntent.client_secret );                                                                                                                                                                                                                      
   } catch (error) {
     console.error('Error creating payment intent:', error.message);
     res.status(500).json({ error: 'Failed to create payment intent.' });
   }
 });
-    
+module.exports = router;
