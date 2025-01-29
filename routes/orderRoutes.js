@@ -1,169 +1,118 @@
 const express = require('express');
 const router = express.Router();
 const Order = require('../models/Order');
+const Cart = require('../models/Cart');
 const Product = require('../models/Product');
-const stripe = require('stripe')('your_stripe_secret_key');
 
-// Create Order
-router.post('/', async (req, res) => {
+
+
+// Complete order and move cart to orders collection
+router.post('/complete-order', async (req, res) => {
   try {
-    const {
-      userId,
-      productId,
-      size,
-      wingsFlavor,
-      sides,
-      drinks,
-      toppings,
-      quantity,
-      totalPrice,
-      deliveryType,
-      contactInfo,
-      scheduledTime,
-      tip,
-    } = req.body;
+    const { userId, paymentIntentId, paymentOption } = req.body;
 
-    console.log('Order Payload Received:', {
-      userId,
-      productId,
-      size,
-      wingsFlavor,
-      sides,
-      drinks,
-      toppings,
-      quantity,
-      totalPrice,
-      deliveryType,
-      contactInfo,
-      scheduledTime,
-      tip,
-    });
-
-    // Validate required fields
-    if (!userId || !totalPrice ) {
-      console.error('Validation Error: Missing required fields.');
-      return res.status(400).json({ error: 'Missing required fields: userId, totalPrice, deliveryType, or scheduledTime.' });
+    // Find the active cart for the user
+    const cart = await Cart.findOne({ userId, status: 'active' }).populate('items.productId');
+    if (!cart) {
+      return res.status(404).json({ error: 'No active cart found.' });
     }
 
-    if (deliveryType === 'delivery' && !contactInfo) {
-      return res.status(400).json({ error: 'Delivery address is required for delivery orders.' });
-    }
-
-    // Normalize drinks and validate
-    const validDrinks = drinks?.filter((drink) => drink.quantity > 0) || [];
-    let resolvedProductId = productId;
-
-    if (!resolvedProductId && validDrinks.length) {
-      const genericBeverageProduct = await Product.findOne({ category: 'Beverages', name: 'Beverages' });
-      if (!genericBeverageProduct) {
-        console.error('Generic Beverages product not found.');
-        return res.status(400).json({ error: 'Generic Beverages product not found.' });
-      }
-      resolvedProductId = genericBeverageProduct._id;
-    }
-
-    if (!resolvedProductId) {
-      return res.status(400).json({ error: 'Product ID is required.' });
-    }
-
+    // Create a new order from the cart
     const order = new Order({
-      userId,
-      productId: resolvedProductId,
-      size,
-      wingsFlavor,
-      sides,
-      drinks: validDrinks,
-      toppings,
-      quantity: quantity || 1, // Default quantity to 1 if missing
-      totalPrice,
-      deliveryType,
-      contactInfo: deliveryType === 'delivery' ? contactInfo : null,
-      scheduledTime,
-      tip: tip || 0,
+      userId: cart.userId,
+      items: cart.items,
+      deliveryType: cart.deliveryType,
+      scheduleTime: cart.scheduleTime,
+      instructions: cart.instructions,
+      totalPrice: cart.totalPrice,
+      paymentIntentId: paymentOption === 'online' ? paymentIntentId : null, // Save the payment intent ID if paid online
+      paymentOption, // Save the payment option
+      status: paymentOption === 'online' ? 'confirmed' : 'payment pending', // Mark as completed if paid online
+      createdAt: new Date(),
     });
 
+    // Save the new order
     await order.save();
-    console.log('Order successfully saved:', order);
-    res.status(201).json(order);
-  } catch (err) {
-    console.error('Error creating order:', err.message);
-    res.status(500).json({ error: 'Failed to create order.' });
+
+    // Mark the cart as completed
+    cart.status = 'completed';
+    await cart.save();
+
+    res.status(200).json({ message: 'Order completed successfully!', order });
+
+    // Emit event to notify admin of the new order
+    req.wss.clients.forEach(client => {
+      console.log("client",client.readyState)
+      if (client.readyState === WebSocket.OPEN) {
+        console.log("client send");
+        client.send(JSON.stringify(order));
+        console.log("client sent successfully");
+      }
+    });
+  } catch (error) {
+    console.error('Error completing order:', error.message);
+    res.status(500).json({ error: 'Failed to complete order' });
   }
 });
 
-//Merge Order after login 
-router.post('/merge-cart', async (req, res) => {
+// Complete order and move cart to orders collection
+router.post('/accept', async (req, res) => {
   try {
-    const { userId, localCart } = req.body;
+    const { orderId, preparationTime} = req.body;
 
-    if (!userId || !Array.isArray(localCart) || localCart.length === 0) {
-      return res.status(400).json({ error: 'Invalid request: Missing userId or localCart is empty.' });
+    // Find the active cart for the user
+    const acceptOrder = await Order.findOne({ orderId, status: 'confirmed' })
+    if (!acceptOrder) {
+      return res.status(404).json({ error: 'No active order found.' });
     }
 
-    console.log('Merging cart for user:', userId);
-    console.log('Local cart items:', localCart);
+    acceptOrder.status = 'accepted';
+    acceptOrder.preparationTime = preparationTime;  
 
-    const mergedOrders = [];
+    // Save the new order
+    await acceptOrder.save();
+    
+    res.status(200).json({ message: 'Order completed successfully!', acceptOrder });
+ // Notify the client that the order has been accepted
+ req.wss.clients.forEach(client => {
+  if (client.readyState === WebSocket.OPEN) {
+    client.send(JSON.stringify({ type: 'order-accepted', orderId }));
+  }
+});
+  } catch (error) {
+    console.error('Error completing order:', error.message);
+    res.status(500).json({ error: 'Failed to complete order' });
+  }
+});
 
-    for (const item of localCart) {
-      const {
-        productId,
-        size,
-        wingsFlavor,
-        sides,
-        drinks,
-        toppings,
-        quantity,
-        totalPrice,
-        deliveryType,
-        contactInfo,
-        scheduledTime,
-        tip,
-      } = item;
+// decline order 
+router.post('/decline', async (req, res) => {
+  try {
+    const { orderId, reason} = req.body;
 
-      // Normalize drinks and validate
-      const validDrinks = drinks?.filter((drink) => drink.quantity > 0) || [];
-      let resolvedProductId = productId;
-
-      if (!resolvedProductId && validDrinks.length) {
-        const genericBeverageProduct = await Product.findOne({ category: 'Beverages', name: 'Beverages' });
-        if (!genericBeverageProduct) {
-          console.error('Generic Beverages product not found.');
-          return res.status(400).json({ error: 'Generic Beverages product not found.' });
-        }
-        resolvedProductId = genericBeverageProduct._id;
-      }
-
-      if (!resolvedProductId) {
-        return res.status(400).json({ error: 'Product ID is required.' });
-      }
-
-      // Create and save the order
-      const order = new Order({
-        userId,
-        productId: resolvedProductId,
-        size,
-        wingsFlavor,
-        sides,
-        drinks: validDrinks,
-        toppings,
-        quantity: quantity || 1, // Default quantity to 1 if missing
-        totalPrice,
-        deliveryType,
-        contactInfo: deliveryType === 'delivery' ? contactInfo : null,
-        scheduledTime,
-        tip: tip || 0,
-      });
-
-      await order.save();
-      mergedOrders.push(order);
+    // Find the active cart for the user
+    const declineOrder = await Order.findOne({orderId, status: 'confirmed' })
+    if (!declineOrder) {
+      return res.status(404).json({ error: 'No active order found.' });
     }
 
-    console.log('Merged orders:', mergedOrders);
-    res.status(201).json({ message: 'Cart merged successfully.', mergedOrders });
-  } catch (err) {
-    console.error('Error merging cart:', err.message);
-    res.status(500).json({ error: 'Failed to merge cart.' });
+    declineOrder.status = 'declined';
+    declineOrder.reason = reason;  
+
+    // Save the new order
+    await declineOrder.save();
+    
+    res.status(200).json({ message: 'Order declined!', declineOrder });
+     // Notify the client that the order has been declined
+     req.wss.clients.forEach(client => {
+      if (client.readyState === WebSocket.OPEN) {
+        client.send(JSON.stringify({ type: 'order-declined', orderId, reason }));
+      }
+    });
+    
+  } catch (error) {
+    console.error('Error completing order:', error.message);
+    res.status(500).json({ error: 'Failed to complete order' });
   }
 });
 
@@ -274,7 +223,7 @@ router.delete('/cart/:itemId', async (req, res) => {
 // Get All Orders
 router.get('/', async (req, res) => {
   try {
-    const orders = await Order.find().populate('productId');
+    const orders = await Order.find({status:'confirmed'}).populate('items.productId');;
     res.json(orders);
   } catch (err) {
     console.error('Error fetching orders:', err.message);

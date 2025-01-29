@@ -58,7 +58,7 @@ router.post('/', async (req, res) => {
       validDrinks.forEach((drink) => {
         const drinkDetails = availableDrinks.find((d) => d.name === drink.name);
 
-        const totalPrice = drinkDetails.price * drink.quantity;
+        const totalPrice = drinkDetails.price ;
         cartItems.push({
           userId,
           productId: drinkDetails._id, // Use the product ID of the drink
@@ -197,7 +197,8 @@ router.post('/merge-cart', async (req, res) => {
         validDrinks.forEach((drink) => {
           const drinkDetails = availableDrinks.find((d) => d.name === drink.name);
 
-          const totalPrice = drinkDetails.price * drink.quantity;
+          const totalPrice = drinkDetails.price ;
+
           mergedCartItems.push({
             userId,
             productId: drinkDetails._id, // Use the product ID of the drink
@@ -450,44 +451,7 @@ router.get('/:userId/updateTotalPrice/:totalPrice', async (req, res) => {
 });
 
 
-// Complete order and move cart to orders collection
-router.post('/complete-order', async (req, res) => {
-  try {
-    const { userId, paymentIntentId, paymentOption } = req.body;
 
-    // Find the active cart for the user
-    const cart = await Cart.findOne({ userId, status: 'active' }).populate('items.productId');
-    if (!cart) {
-      return res.status(404).json({ error: 'No active cart found.' });
-    }
-
-    // Create a new order from the cart
-    const order = new Order({
-      userId: cart.userId,
-      items: cart.items,
-      deliveryType: cart.deliveryType,
-      scheduleTime: cart.scheduleTime,
-      instructions: cart.instructions,
-      totalPrice: cart.totalPrice,
-      paymentIntentId: paymentOption === 'online' ? paymentIntentId : null, // Save the payment intent ID if paid online
-      paymentOption, // Save the payment option
-      status: paymentOption === 'online' ? 'completed' : 'payment pending', // Mark as completed if paid online
-      createdAt: new Date(),
-    });
-
-    // Save the new order
-    await order.save();
-
-    // Mark the cart as completed
-    cart.status = 'completed';
-    await cart.save();
-
-    res.status(200).json({ message: 'Order completed successfully!', order });
-  } catch (error) {
-    console.error('Error completing order:', error.message);
-    res.status(500).json({ error: 'Failed to complete order' });
-  }
-});
 
 // Add item to cart
 router.post('/add', async (req, res) => {

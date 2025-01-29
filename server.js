@@ -4,6 +4,8 @@ const cors = require('cors');
 const session = require('express-session');
 const passport = require('passport');
 const authRoutes = require('./routes/authRoutes');  // Import the Passport configuration
+const http = require('http'); // Required for Socket.IO
+const { WebSocketServer } = require('ws');
 
 const categoryRoutes = require('./routes/categoryRoutes');
 const itemRoutes = require('./routes/itemRoutes');
@@ -16,6 +18,13 @@ const beveragesRoutes = require('./routes/beverageRoutes.js');
 const userRoutes = require('./routes/userRoutes.js');
 const paymentRoutes = require('./routes/paymentRoutes.js');
 const app = express();
+const server = http.createServer(app);
+const wss = new WebSocketServer({ server });
+// Middleware to pass the WebSocket server instance to the routes
+app.use((req, res, next) => {
+  req.wss = wss;
+  next();
+});
 
 app.use(express.json());
 app.use(session({ secret: 'your_session_secret', resave: false, saveUninitialized: false }));
@@ -24,6 +33,16 @@ app.use(passport.session());
 
 
 app.use(cors());
+// WebSocket connection handling
+wss.on('connection', (ws) => {
+  console.log('New client connected');
+  ws.on('message', (message) => {
+    console.log(`Received message => ${message}`);
+  });
+  ws.on('close', () => {
+    console.log('Client disconnected');
+  });
+});
 
 mongoose.connect('mongodb+srv://srilakshmipasupuleti:sri123@cluster0.qilmkdx.mongodb.net/pizza_store', {
   useNewUrlParser: true,
@@ -44,6 +63,8 @@ app.use('/api/auth', authRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/payment', paymentRoutes);
 
+
+
 const PORT = 5000;
 
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
