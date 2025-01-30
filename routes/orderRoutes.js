@@ -2,45 +2,37 @@ const express = require('express');
 const router = express.Router();
 const Order = require('../models/Order');
 const Cart = require('../models/Cart');
-const Product = require('../models/Product');
 
-
-
-// Complete order and move cart to orders collection
+// Complete Order
 router.post('/complete-order', async (req, res) => {
   try {
     const { userId, paymentIntentId, paymentOption } = req.body;
 
-    // Find the active cart for the user
     const cart = await Cart.findOne({ userId, status: 'active' }).populate('items.productId');
-    if (!cart) {
-      return res.status(404).json({ error: 'No active cart found.' });
-    }
+    if (!cart) return res.status(404).json({ error: 'No active cart found.' });
 
-    // Create a new order from the cart
     const order = new Order({
       userId: cart.userId,
-      items: cart.items,
+      items: cart.items, 
       deliveryType: cart.deliveryType,
       scheduleTime: cart.scheduleTime,
       instructions: cart.instructions,
+
       totalPrice: cart.totalPrice,
-      paymentIntentId: paymentOption === 'online' ? paymentIntentId : null, // Save the payment intent ID if paid online
-      paymentOption, // Save the payment option
-      status: paymentOption === 'online' ? 'confirmed' : 'payment pending', // Mark as completed if paid online
+      paymentIntentId: paymentOption === 'online' ? paymentIntentId : null,
+      paymentOption,
+      status: paymentOption === 'online' ? 'confirmed' : 'payment pending',
+      isOrderConfirmed:false,
       createdAt: new Date(),
     });
 
-    // Save the new order
     await order.save();
-
-    // Mark the cart as completed
     cart.status = 'completed';
     await cart.save();
 
     res.status(200).json({ message: 'Order completed successfully!', order });
 
-    // Emit event to notify admin of the new order
+    //Notify Admin via WebSocket
     req.wss.clients.forEach(client => {
       console.log("client",client.readyState)
       if (client.readyState === WebSocket.OPEN) {
@@ -55,66 +47,62 @@ router.post('/complete-order', async (req, res) => {
   }
 });
 
-// Complete order and move cart to orders collection
+// Accept Order
 router.post('/accept', async (req, res) => {
   try {
-    const { orderId, preparationTime} = req.body;
 
-    // Find the active cart for the user
-    const acceptOrder = await Order.findOne({ orderId, status: 'confirmed' })
-    if (!acceptOrder) {
-      return res.status(404).json({ error: 'No active order found.' });
-    }
+    const { orderId, preparationTime } = req.body;
+    const acceptOrder = await Order.findById(orderId);
+    if (!acceptOrder) return res.status(404).json({ error: 'Order not found.' });
 
     acceptOrder.status = 'accepted';
-    acceptOrder.preparationTime = preparationTime;  
-
-    // Save the new order
+    acceptOrder.isOrderConfirmed = true;
+    acceptOrder.preparationTime = preparationTime;
     await acceptOrder.save();
-    
-    res.status(200).json({ message: 'Order completed successfully!', acceptOrder });
- // Notify the client that the order has been accepted
- req.wss.clients.forEach(client => {
-  if (client.readyState === WebSocket.OPEN) {
-    client.send(JSON.stringify({ type: 'order-accepted', orderId }));
-  }
-});
+
+    res.status(200).json({ message: 'Order accepted successfully!' });
+
+    // Notify User
+    // req.clients.forEach((client, ws) => {
+    //   if (client.clientType === 'user' 
+    //     && String(client.userId) === String(acceptOrder.userId) && ws.readyState === ws.OPEN) {
+    //     ws.send(JSON.stringify({ type: 'order-accepted', orderId }));
+    //   }
+    // });
   } catch (error) {
-    console.error('Error completing order:', error.message);
-    res.status(500).json({ error: 'Failed to complete order' });
+    console.error('Error accepting order:', error.message);
+    res.status(500).json({ error: 'Failed to accept order' });
   }
 });
 
-// decline order 
+// Decline Order
 router.post('/decline', async (req, res) => {
   try {
-    const { orderId, reason} = req.body;
-
-    // Find the active cart for the user
-    const declineOrder = await Order.findOne({orderId, status: 'confirmed' })
-    if (!declineOrder) {
-      return res.status(404).json({ error: 'No active order found.' });
-    }
-
+      const { orderId, reason } = req.body;
+    const declineOrder = await Order.findById(orderId);
+    if (!declineOrder) return res.status(404).json({ error: 'Order not found.' });
+console.error
     declineOrder.status = 'declined';
-    declineOrder.reason = reason;  
-
-    // Save the new order
+    declineOrder.isOrderConfirmed = true;
+    declineOrder.reason = reason;
     await declineOrder.save();
-    
+
     res.status(200).json({ message: 'Order declined!', declineOrder });
-     // Notify the client that the order has been declined
-     req.wss.clients.forEach(client => {
-      if (client.readyState === WebSocket.OPEN) {
-        client.send(JSON.stringify({ type: 'order-declined', orderId, reason }));
-      }
-    });
-    
+
+    // Notify User
+    // req.clients.forEach((client, ws) => {
+    //   if (client.clientType === 'user' 
+    //     && String(client.userId) === String(declineOrder.userId) && ws.readyState === ws.OPEN) {
+    //     ws.send(JSON.stringify({ type: 'order-declined', orderId, reason }));
+    //   }
+    // });
   } catch (error) {
-    console.error('Error completing order:', error.message);
-    res.status(500).json({ error: 'Failed to complete order' });
+    ('Error declining order:', error.message);
+    res.status(500).json({ error: 'Failed to decline order' });
   }
 });
+
+
 
 
 // Fetch Cart (Pending Orders for User)
@@ -223,8 +211,25 @@ router.delete('/cart/:itemId', async (req, res) => {
 // Get All Orders
 router.get('/', async (req, res) => {
   try {
-    const orders = await Order.find({status:'confirmed'}).populate('items.productId');;
-    res.json(orders);
+    const orders = await Order.find({ isOrderConfirmed: true })
+    .populate('items.productId')
+    .sort({ createdAt: -1 }); // Sort by date in descending order
+
+  res.status(200).json(orders);
+  } catch (err) {
+    console.error('Error fetching orders:', err.message);
+    res.status(500).json({ error: 'Failed to fetch orders.' });
+  }
+});
+
+// Get All Orders
+router.get('/missed', async (req, res) => {
+  try {
+    const orders = await Order.find({ isOrderConfirmed: false })
+    .populate('items.productId')
+    .sort({ createdAt: -1 }); // Sort by date in descending order
+
+  res.status(200).json(orders);
   } catch (err) {
     console.error('Error fetching orders:', err.message);
     res.status(500).json({ error: 'Failed to fetch orders.' });

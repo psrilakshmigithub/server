@@ -206,6 +206,7 @@ const products = [
   }, 
   
     {
+      
       name: 'Beverages',
       category: 'Beverages',
       price: 0, // Price is dynamically calculated

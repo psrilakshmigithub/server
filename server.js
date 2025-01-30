@@ -20,9 +20,11 @@ const paymentRoutes = require('./routes/paymentRoutes.js');
 const app = express();
 const server = http.createServer(app);
 const wss = new WebSocketServer({ server });
+
 // Middleware to pass the WebSocket server instance to the routes
 app.use((req, res, next) => {
   req.wss = wss;
+
   next();
 });
 
@@ -36,6 +38,7 @@ app.use(cors());
 // WebSocket connection handling
 wss.on('connection', (ws) => {
   console.log('New client connected');
+
   ws.on('message', (message) => {
     console.log(`Received message => ${message}`);
   });
@@ -43,6 +46,26 @@ wss.on('connection', (ws) => {
     console.log('Client disconnected');
   });
 });
+
+
+// **SSE Handling (For User)**
+app.get("/sse", (req, res) => {
+  const userId = req.query.userId;
+  if (!userId) return res.status(400).send("Missing userId");
+
+  res.setHeader("Content-Type", "text/event-stream");
+  res.setHeader("Cache-Control", "no-cache");
+  res.setHeader("Connection", "keep-alive");
+
+  sseClients.set(userId, res);
+  console.log(`SSE User Connected: ${userId}`);
+
+  req.on("close", () => {
+    sseClients.delete(userId);
+    console.log(`❌ SSE User Disconnected: ${userId}`);
+  });
+});
+
 
 mongoose.connect('mongodb+srv://srilakshmipasupuleti:sri123@cluster0.qilmkdx.mongodb.net/pizza_store', {
   useNewUrlParser: true,

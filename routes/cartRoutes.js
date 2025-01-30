@@ -17,6 +17,7 @@ router.post('/', async (req, res) => {
       drinks,
       toppings,
       quantity,
+      totalPrice
     } = req.body;
 
     console.log('Cart Payload Received:', {
@@ -28,6 +29,7 @@ router.post('/', async (req, res) => {
       drinks,
       toppings,
       quantity,
+      totalPrice
     });
 
     if (!userId || (!productId && (!drinks || drinks.length === 0))) {
@@ -106,7 +108,7 @@ router.post('/', async (req, res) => {
       const extraToppingsPrice =
         Math.max(0, (toppings?.flat().length || 0) - (product.details.toppingsPerPizza || 0)) *
         (product.details.extraToppingPrice || 0);
-      const totalPrice = (product.price + sizePriceAdjustment + extraToppingsPrice) * (quantity || 1);
+      //const totalPrice = (product.price + sizePriceAdjustment + extraToppingsPrice) * (quantity || 1);
 
       const mainCartItem = {
         userId,
@@ -176,6 +178,7 @@ router.post('/merge-cart', async (req, res) => {
         drinks,
         toppings,
         quantity,
+        totalPrice
       } = item;
 
       // Handle beverages separately

@@ -20,8 +20,9 @@ const orderSchema = new mongoose.Schema({
   instructions: { type: String, required: false },
   totalPrice: { type: Number, required: true },
   paymentIntentId: { type: String, required: false }, // Add this field
-  status: { type: String, enum: ['pending', 'completed','payment pending','confirmed'], default: 'pending' },
+  status: { type: String, enum: ['pending', 'completed','payment pending','confirmed','accepted','declined'], default: 'pending' },
   createdAt: { type: Date, default: Date.now },
+  isOrderConfirmed: { type: Boolean, default: false }, // Add this field
   reason: { type: String, required: false }, // Add this field
 
 });
