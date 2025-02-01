@@ -4,6 +4,7 @@ const Order = require('../models/Order');
 const Cart = require('../models/Cart');
 
 // Complete Order
+// Complete Order
 router.post('/complete-order', async (req, res) => {
   try {
     const { userId, paymentIntentId, paymentOption } = req.body;
@@ -13,16 +14,15 @@ router.post('/complete-order', async (req, res) => {
 
     const order = new Order({
       userId: cart.userId,
-      items: cart.items, 
+      items: cart.items,
       deliveryType: cart.deliveryType,
       scheduleTime: cart.scheduleTime,
       instructions: cart.instructions,
-
       totalPrice: cart.totalPrice,
       paymentIntentId: paymentOption === 'online' ? paymentIntentId : null,
       paymentOption,
       status: paymentOption === 'online' ? 'confirmed' : 'payment pending',
-      isOrderConfirmed:false,
+      isOrderConfirmed: false,
       createdAt: new Date(),
     });
 
@@ -30,50 +30,58 @@ router.post('/complete-order', async (req, res) => {
     cart.status = 'completed';
     await cart.save();
 
+    // ✅ WebSocket Notification for Admins
+    if (req.wss && req.wss.clients) {
+      req.wss.clients.forEach(client => {
+        if (client.readyState === WebSocket.OPEN) {
+          client.send(JSON.stringify(order));
+        }
+      });
+    } else {
+      console.warn("⚠️ WebSocket Server (`req.wss`) is undefined!");
+    }
+
+    // ✅ Send response **AFTER** notifying WebSocket clients
     res.status(200).json({ message: 'Order completed successfully!', order });
 
-    //Notify Admin via WebSocket
-    req.wss.clients.forEach(client => {
-      console.log("client",client.readyState)
-      if (client.readyState === WebSocket.OPEN) {
-        console.log("client send");
-        client.send(JSON.stringify(order));
-        console.log("client sent successfully");
-      }
-    });
   } catch (error) {
-    console.error('Error completing order:', error.message);
-    res.status(500).json({ error: 'Failed to complete order' });
+    console.error('❌ Error completing order:', error.message);
+    if (!res.headersSent) {
+      res.status(500).json({ error: 'Failed to complete order' });
+    }
   }
 });
 
-// Accept Order
-router.post('/accept', async (req, res) => {
-  try {
 
+
+// Accept Order
+router.post("/accept", async (req, res) => {
+  try {
     const { orderId, preparationTime } = req.body;
     const acceptOrder = await Order.findById(orderId);
-    if (!acceptOrder) return res.status(404).json({ error: 'Order not found.' });
+    if (!acceptOrder) return res.status(404).json({ error: "Order not found." });
 
-    acceptOrder.status = 'accepted';
+    acceptOrder.status = "accepted";
     acceptOrder.isOrderConfirmed = true;
     acceptOrder.preparationTime = preparationTime;
     await acceptOrder.save();
 
-    res.status(200).json({ message: 'Order accepted successfully!' });
+    res.status(200).json({ message: "✅ Order accepted successfully!" });
 
-    // Notify User
-    // req.clients.forEach((client, ws) => {
-    //   if (client.clientType === 'user' 
-    //     && String(client.userId) === String(acceptOrder.userId) && ws.readyState === ws.OPEN) {
-    //     ws.send(JSON.stringify({ type: 'order-accepted', orderId }));
-    //   }
-    // });
+    // ✅ Notify User via SSE
+   
+
+    const userSSE = req.sseClients.get(acceptOrder.userId.toString());
+    if (userSSE) {
+      userSSE.write(`data: ${JSON.stringify({ type: 'order-confirmed', orderId })}\n\n`);
+      userSSE.end(); // Close SSE connection after sending confirmation
+    }
   } catch (error) {
-    console.error('Error accepting order:', error.message);
-    res.status(500).json({ error: 'Failed to accept order' });
+    console.error("❌ Error accepting order:", error.message);
+    res.status(500).json({ error: "Failed to accept order" });
   }
 });
+
 
 // Decline Order
 router.post('/decline', async (req, res) => {
@@ -88,14 +96,14 @@ console.error
     await declineOrder.save();
 
     res.status(200).json({ message: 'Order declined!', declineOrder });
+// ✅ Notify User via SSE
 
-    // Notify User
-    // req.clients.forEach((client, ws) => {
-    //   if (client.clientType === 'user' 
-    //     && String(client.userId) === String(declineOrder.userId) && ws.readyState === ws.OPEN) {
-    //     ws.send(JSON.stringify({ type: 'order-declined', orderId, reason }));
-    //   }
-    // });
+const userSSE = req.sseClients.get(declineOrder.userId.toString());
+if (userSSE) {
+  userSSE.write(`data: ${JSON.stringify({ type: 'order-confirmed', orderId })}\n\n`);
+  userSSE.end(); // Close SSE connection after sending confirmation
+}
+    
   } catch (error) {
     ('Error declining order:', error.message);
     res.status(500).json({ error: 'Failed to decline order' });
