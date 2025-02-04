@@ -67,7 +67,7 @@ const products = [
   name: 'Pizza & Wings Combo',
   category: 'Combos',
   price: 25.99,
-  image: '/images/spicy_wings.jpg',
+  image: '/images/large_pizza_combo.jpg',
   details: {
     pizzas: 1,
     wingsFlavors: ['Mild', 'Hot', 'Medium', 'Honey Garlic','Sweet Chili'],
@@ -94,7 +94,7 @@ const products = [
   name: 'Super Bowl Wings Combo Deal',
   category: 'superbowlcombo',
   price: 89.99,
-  image: '/images/large_pizza_combo.jpg',
+  image: '/images/spicy_wings.jpg',
   details: {    
     wingsFlavors: ['Mild', 'Hot', 'Medium', 'Honey Garlic','Sweet Chili'],
     sides: ['Potato Wedges','French Fries'],   
@@ -241,17 +241,14 @@ const products = [
     category: 'Sides',
     price: 0,
     image: '/images/sides.jpg',
-    details: {}
-      
-    ,
+    details: {},
   },
   {
     name: 'Potato Wedges',
     category: 'Sides',
     price: 4.99,
     image: '/images/sides.jpg',
-    details: {
-      
+    details: {    
     },
   },
   {
