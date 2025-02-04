@@ -37,7 +37,7 @@ const cartRoutes = require("./routes/cartRoutes");
 const orderRoutes = require("./routes/orderRoutes");
 const productRoutes = require("./routes/products");
 const toppingsRoute = require("./routes/toppings");
-
+const storeRoutes = require("./routes/storeRoutes");
 const userRoutes = require("./routes/userRoutes.js");
 const paymentRoutes = require("./routes/paymentRoutes.js");
 
@@ -86,6 +86,7 @@ app.use("/api/cart", cartRoutes);
 app.use("/images", express.static("public/images"));
 
 app.use("/api/orders", orderRoutes);
+app.use("/api/store", storeRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/toppings", toppingsRoute);
 app.use("/api/auth", authRoutes);

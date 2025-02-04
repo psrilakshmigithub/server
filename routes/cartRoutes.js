@@ -426,8 +426,15 @@ router.post('/confirm', async (req, res) => {
     // Update cart details
     cart.deliveryType = deliveryType;
     cart.scheduleTime = scheduledTime;
-    cart.instructions = instructions;    
-  
+    cart.instructions = instructions;   
+    const deliveryFee = 8;
+    if (deliveryType === 'delivery') {
+      cart.totalPrice += deliveryFee;
+      cart.deliveryFee = deliveryFee; // Assuming you have a deliveryFee field in your Cart model
+    } else {
+      cart.deliveryFee = 0; // Reset delivery fee if not delivery
+    } 
+    
 
     // Save the updated cart
     await cart.save();

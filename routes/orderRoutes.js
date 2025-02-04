@@ -3,12 +3,19 @@ const router = express.Router();
 const Order = require('../models/Order');
 const User = require('../models/User');
 const Cart = require('../models/Cart');
+const StoreSettings = require("../models/storeSettings");
 
 // Complete Order
 // Complete Order
 router.post('/complete-order', async (req, res) => {
   try {
     const { userId, paymentIntentId, paymentOption } = req.body;
+
+    // Check store status
+    const storeStatus = await StoreSettings.findOne();
+    if (!storeStatus || !storeStatus.storeOpen) {
+      return res.status(403).json({ message: "Store is closed. Cannot process orders now." });
+    }
 
     const cart = await Cart.findOne({ userId, status: 'active' }).populate('items.productId');
     if (!cart) return res.status(404).json({ error: 'No active cart found.' });
@@ -39,6 +46,7 @@ router.post('/complete-order', async (req, res) => {
       status: paymentOption === 'online' ? 'confirmed' : 'payment pending',
       paymentStatus: paymentOption === 'online' ? 'paid' : 'not paid',
       isOrderConfirmed: false,
+      deliveryFee: cart.deliveryFee,
       createdAt: new Date(),
     });
 

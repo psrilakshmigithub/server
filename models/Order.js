@@ -32,6 +32,7 @@ const orderSchema = new mongoose.Schema({
   paymentStatus: { type: String, enum: ['paid','not paid','refunded'], default: 'not paid' }, // Add this field
   isOrderConfirmed: { type: Boolean, default: false }, // Add this field
   reason: { type: String, required: false }, // Add this field
+  deliveryFee: { type: Number, required: false, default: 0 },
 
 });
 

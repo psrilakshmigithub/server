@@ -20,6 +20,7 @@ const cartSchema = new mongoose.Schema({
   instructions: { type: String, required: false },
   totalPrice: { type: Number, required: false },
   tip: { type: Number, required: false, default: 0 },
+  deliveryFee: { type: Number, required: false, default: 0 },
   status: { type: String, enum: ['active', 'completed','confirmed','pending','payment pending'], default: 'active' }, // Optional
   createdAt: { type: Date, default: Date.now },
 });
