@@ -17,6 +17,7 @@ router.post('/', async (req, res) => {
       drinks,
       toppings,
       quantity,
+      priceByQuantity,
       totalPrice
     } = req.body;
 
@@ -29,6 +30,7 @@ router.post('/', async (req, res) => {
       drinks,
       toppings,
       quantity,
+      priceByQuantity,
       totalPrice
     });
 
@@ -70,6 +72,7 @@ router.post('/', async (req, res) => {
           drinks: [{ name: drink.name, quantity: drink.quantity }],
           toppings: null,
           quantity: drink.quantity,
+          priceByQuantity,
           totalPrice,
         });
       });
@@ -119,6 +122,7 @@ router.post('/', async (req, res) => {
         drinks: isCombo ? drinks : null, // Save drinks if they are part of a combo
         toppings,
         quantity: quantity || 1,
+        priceByQuantity,
         totalPrice,
       };
 
@@ -178,6 +182,7 @@ router.post('/merge-cart', async (req, res) => {
         drinks,
         toppings,
         quantity,
+        priceByQuantity,
         totalPrice
       } = item;
 
@@ -211,6 +216,7 @@ router.post('/merge-cart', async (req, res) => {
             drinks: [{ name: drink.name, quantity: drink.quantity }],
             toppings: null,
             quantity: drink.quantity,
+            priceByQuantity,
             totalPrice,
           });
         });
@@ -264,6 +270,7 @@ router.post('/merge-cart', async (req, res) => {
           drinks: product.category === 'Combos' || product.category === 'FamilyCombos' ? drinks : null,
           toppings,
           quantity: quantity || 1,
+          priceByQuantity,
           totalPrice,
         };
 
@@ -345,6 +352,7 @@ router.put('/:userId/:itemId', async (req, res) => {
     }
 
     item.quantity = quantity;
+    item.totalPrice=item.priceByQuantity * quantity;
     await cart.save();
 
     const cartItems = await Cart.findOne({ userId: req.params.userId, status: 'active' }).populate('items.productId');;
@@ -396,6 +404,7 @@ router.get('/:userId', async (req, res) => {
 // Get cart by user ID
 router.get('/totalPrice/:userId', async (req, res) => {
   try {
+
     const cart = await Cart.findOne({ userId: req.params.userId, status: 'active' })
     res.json(cart.totalPrice || { totalPrice: 0 }); 
   } catch (err) {
@@ -434,16 +443,18 @@ router.post('/confirm', async (req, res) => {
 
 
 // Update total price in the cart
-router.get('/:userId/updateTotalPrice/:totalPrice', async (req, res) => {
+router.get('/:userId/updateTotalPrice', async (req, res) => {
   try {
-    const { userId, totalPrice } = req.params;
+    const { userId } = req.params;
+    const { newTotalPrice, tip } = req.query;
 
     const cart = await Cart.findOne({ userId, status: 'active' });
     if (!cart) {
       return res.status(404).json({ error: 'Cart not found' });
     }
 
-    cart.totalPrice = totalPrice;
+    cart.totalPrice = parseFloat(newTotalPrice);
+    cart.tip = parseFloat(tip);
     await cart.save();
 
     res.status(200).json({ message: 'Total price updated successfully', cart });

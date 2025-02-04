@@ -12,6 +12,9 @@ router.get('/', async (req, res) => {
     if(category === 'Beverages') {
       query.name = { $ne: 'Beverages' }; // Exclude the 'Beverages' product from the list
     }
+    if(category === 'Sides') {
+      query.name = { $ne: 'Sides & Dips' }; 
+    }
     const products = await Product.find(query);
     console.log('Fetching products...', products);
     res.json(products);
@@ -32,6 +35,19 @@ router.get('/beverages', async (req, res) => {
   } catch (error) {
     console.error('Error fetching beverages:', error);
     res.status(500).json({ error: 'Failed to fetch beverages', details: error.message });
+  }
+});
+
+router.get('/sides', async (req, res) => {
+  try {
+    // Log to verify the request
+    console.log('Fetching Sides...');
+    const sides = await Product.find({ category: 'Sides', name: { $ne: 'Sides & Dips' } });
+     console.log('Fetching Sides...');
+    res.json(sides);
+  } catch (error) {
+    console.error('Error fetching sides:', error);
+    res.status(500).json({ error: 'Failed to fetch sides', details: error.message });
   }
 });
 

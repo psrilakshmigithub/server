@@ -43,10 +43,22 @@ const products = [
   {
     name: 'Wings',
     category: 'Wings',
-    price: 23.99,
+    price: 8.99,
     image: '/images/spicy_wings.jpg',
     details: {
-      sizes: ['10 pcs', '25 pcs', '50 pcs'],   
+      sizes: ['10 pcs','15 pcs','20 pcs' ,'25 pcs','30 pcs','35 pcs','40 pcs','45 pcs','50 pcs'],   
+      sizePrices: {
+        '10 pcs': 0,
+        '15 pcs': 4,
+        '20 pcs': 8,
+        '25 pcs': 12,
+        '30 pcs': 16,
+        '35 pcs': 20,
+        '40 pcs': 24,
+        '45 pcs': 28,       
+        '50 pcs': 32,  
+        
+      },
       wingsFlavors: ['Mild', 'Hot', 'Medium', 'Honey Garlic'],
     },
   },
@@ -58,9 +70,9 @@ const products = [
   image: '/images/large_pizza_combo.jpg',
   details: {
     pizzas: 1,
-    wingsFlavors: ['Mild', 'Hot', 'Medium', 'Honey Garlic'],
-    sides: ['Garlic Bread', 'Potato Wedges'],
-    drinks: ['Sprite', 'Root Beer'],
+    wingsFlavors: ['Mild', 'Hot', 'Medium', 'Honey Garlic','Sweet Chili'],
+    sides: ['Garlic Bread','Potato Wedges','Garlic Fingers','French Fries'],
+    drinks: [],
     toppingsPerPizza: 3,
     extraToppingPrice: 1.75,
     sizes: ['Small', 'Medium', 'Large','ExtraLarge'],
@@ -86,9 +98,9 @@ const products = [
     image: '/images/family_combo.jpg',
     details: {
       pizzas: 2,
-      wingsFlavors: ['Mild', 'Hot','Medium', 'Honey Garlic'],
-      sides: ['Garlic Bread','Potato Wedges'],
-      drinks: ['Sprite', 'Root Beer'],
+      wingsFlavors: ['Mild', 'Hot','Medium', 'Honey Garlic','Sweet Chili'],
+      sides: ['Garlic Bread','Potato Wedges','Garlic Fingers','French Fries'],
+      drinks: [],
       toppingsPerPizza: 3,
       extraToppingPrice: 1.75,
       sizes: ['Small', 'Medium', 'Large','ExtraLarge'],
@@ -215,15 +227,77 @@ const products = [
     },
   
   {
-    name: 'Sides',
+    name: 'Sides & Dips',
+    category: 'Sides',
+    price: 0,
+    image: '/images/sides.jpg',
+    details: {}
+      
+    ,
+  },
+  {
+    name: 'Potato Wedges',
     category: 'Sides',
     price: 4.99,
     image: '/images/sides.jpg',
     details: {
-      Flavors: ['Garlic Bread', 'Potato Wedges'],
+      
     },
   },
-
+  {
+    name: 'Garlic Bread',
+    category: 'Sides',
+    price: 4.99,
+    image: '/images/Garlicbread.jpg',
+    details: {
+     
+    },
+  },
+  {
+    name: 'Garlic Fingers',
+    category: 'Sides',
+    price: 5.99,
+    image: '/images/garlicfingers.jpg',
+    details: {
+      
+    },
+  },
+  {
+    name: 'French Fries',
+    category: 'Sides',
+    price: 5.99,
+    image: '/images/Frenchfries.jpg',
+    details: {
+     
+    },
+  },
+  {
+    name: 'Ranch Dip',
+    category: 'Sides',
+    price: 0.99,
+    image: '/images/ranch.jpg',
+    details: {
+     
+    },
+  },
+  {
+    name: 'Creamy Garlic Dip',
+    category: 'Sides',
+    price: 0.99,
+    image: '/images/creamygarlic.jpg',
+    details: {
+     
+    },
+  },
+  {
+    name: 'Cheddar',
+    category: 'Sides',
+    price: 0.99,
+    image: '/images/cheddar.jpg',
+    details: {
+     
+    },
+  },
   
 ];
 

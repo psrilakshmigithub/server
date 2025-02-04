@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Order = require('../models/Order');
+const User = require('../models/User');
 const Cart = require('../models/Cart');
 
 // Complete Order
@@ -12,8 +13,22 @@ router.post('/complete-order', async (req, res) => {
     const cart = await Cart.findOne({ userId, status: 'active' }).populate('items.productId');
     if (!cart) return res.status(404).json({ error: 'No active cart found.' });
 
+    // Find the user details
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found.' });
+    }
+     // Find the default contact
+     const defaultContact = user.contacts.find(contact => contact.isDefault);
+
     const order = new Order({
       userId: cart.userId,
+      user: {
+        name: user.name,
+        email: user.email,
+        phone: defaultContact ? defaultContact.phone :  null,
+        address: defaultContact ? defaultContact.address : null,
+      },
       items: cart.items,
       deliveryType: cart.deliveryType,
       scheduleTime: cart.scheduleTime,
@@ -22,6 +37,7 @@ router.post('/complete-order', async (req, res) => {
       paymentIntentId: paymentOption === 'online' ? paymentIntentId : null,
       paymentOption,
       status: paymentOption === 'online' ? 'confirmed' : 'payment pending',
+      paymentStatus: paymentOption === 'online' ? 'paid' : 'not paid',
       isOrderConfirmed: false,
       createdAt: new Date(),
     });
@@ -233,9 +249,11 @@ router.get('/', async (req, res) => {
 // Get All Orders
 router.get('/missed', async (req, res) => {
   try {
+    console.log("missed orders");
     const orders = await Order.find({ isOrderConfirmed: false })
     .populate('items.productId')
     .sort({ createdAt: -1 }); // Sort by date in descending order
+    console.log("missed orders response",orders);
 
   res.status(200).json(orders);
   } catch (err) {
@@ -249,6 +267,7 @@ router.get('/:userId', async (req, res) => {
   try {
     const { userId } = req.params;
     const orders = await Order.find({ userId }).populate('items.productId');
+    console.log("orders",orders);
     res.status(200).json(orders);
   } catch (error) {
     console.error('Error fetching orders:', error.message);

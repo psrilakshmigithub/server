@@ -11,6 +11,7 @@ const cartSchema = new mongoose.Schema({
       drinks: [{ name: String, quantity: Number }], // For beverages
       toppings: mongoose.Schema.Types.Mixed, // Array for single pizza or nested arrays for family combos
       quantity: { type: Number, required: true },
+      priceByQuantity: { type: Number, required: true },
       totalPrice: { type: Number, required: true },
     },
   ],
@@ -18,6 +19,7 @@ const cartSchema = new mongoose.Schema({
   scheduleTime: { type: Date, required: false },
   instructions: { type: String, required: false },
   totalPrice: { type: Number, required: false },
+  tip: { type: Number, required: false, default: 0 },
   status: { type: String, enum: ['active', 'completed','confirmed','pending','payment pending'], default: 'active' }, // Optional
   createdAt: { type: Date, default: Date.now },
 });
