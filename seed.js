@@ -62,7 +62,16 @@ const products = [
       wingsFlavors: ['Mild', 'Hot', 'Medium', 'Honey Garlic'],
     },
   },
-  
+  {
+    name: 'Super Bowl Wings Combo Deal',
+    category: 'superbowlcombo',
+    price: 89.99,
+    image: '/images/spicy_wings.jpg',
+    details: {    
+      wingsFlavors: ['Mild', 'Hot', 'Medium', 'Honey Garlic','Sweet Chili'],
+      sides: ['Potato Wedges','French Fries'],   
+    },
+  },
   {
   name: 'Pizza & Wings Combo',
   category: 'Combos',
@@ -88,16 +97,6 @@ const products = [
         ref: 'Beverage',
       },
     ]
-  },
-},
-{
-  name: 'Super Bowl Wings Combo Deal',
-  category: 'superbowlcombo',
-  price: 89.99,
-  image: '/images/spicy_wings.jpg',
-  details: {    
-    wingsFlavors: ['Mild', 'Hot', 'Medium', 'Honey Garlic','Sweet Chili'],
-    sides: ['Potato Wedges','French Fries'],   
   },
 },
  
@@ -187,45 +186,152 @@ const products = [
   {
     name: 'Coke',
     category: 'Beverages',
-    price: 1.99,
+    price: 1.25,
     image: '/images/coke.jpg',
     details: {},
   },
   {
     name: 'Sprite',
     category: 'Beverages',
-    price: 1.99,
+    price: 1.25,
     image: '/images/sprite.jpg',
     details: {},
   }, 
   {
-    name: 'Root Beer',
+    name: ' A&W Root Beer',
     category: 'Beverages',
-    price: 1.99,
+    price: 1.25,
     image: '/images/aw.jpg',
     details: {},
   }, 
   {
     name: 'Pepsi',
     category: 'Beverages',
-    price: 1.99,
+    price: 1.25,
     image: '/images/pepsi.jpg',
     details: {},
   }, 
   {
     name: 'Diet Coke',
     category: 'Beverages',
-    price: 1.99,
+    price: 1.25,
     image: '/images/Diet-Coke-Can.jpg',
     details: {},
   }, 
+  
   {
     name: 'Diet Pepsi',
     category: 'Beverages',
-    price: 1.99,
+    price: 1.25,
     image: '/images/diet_pepsi.jpg',
     details: {},
+  },
+
+  {
+    name: 'Mountain Dew',
+    category: 'Beverages',
+    price: 1.25,
+    image: '/images/mountain dew pop.webp',
+    details: {},
+  },
+
+
+  {
+    name: 'Dr Pepper',
+    category: 'Beverages',
+    price: 1.25,
+    image: '/images/dr-pe-pop.jpg',
+    details: {},
+  },
+
+  {
+    name: 'Cream Soda',
+    category: 'Beverages',
+    price: 1.25,
+    image: '/images/crush-cream-soda-355ml.jpg',
+    details: {},
+  },
+
+  {
+    name: 'Orange Crush',
+    category: 'Beverages',
+    price: 1.25,
+    image: '/images/orange-crush-pop.jpg',
+    details: {},
+  },
+
+  {
+    name: 'Ginger Ale',
+    category: 'Beverages',
+    price: 1.25,
+    image: '/images/gingeralepop.jpg',
+    details: {},
+  },
+
+  {
+    name: 'Ginger Ale 591ml',
+    category: 'Beverages',
+    price: 2.49,
+    image: '/images/ginger-Ale591.jpg',
+    details: {},
+  },{
+    name: '7up 591ml',
+    category: 'Beverages',
+    price: 2.49,
+    image: '/images/7UP591ml.jpg',
+    details: {},
+  },{
+    name: 'Mountaindew 591ml',
+    category: 'Beverages',
+    price: 2.49,
+    image: '/images/Mountain-Dew591.jpg',
+    details: {},
+  },{
+    name: 'Orange Crush 591ml',
+    category: 'Beverages',
+    price: 2.49,
+    image: '/images/Orange-Crush591.jpg',
+    details: {},
+  },{
+    name: 'Pepsi 591 ml',
+    category: 'Beverages',
+    price: 2.49,
+    image: '/images/Pepsi-591.jpg',
+    details: {},
+  },
+
+  {
+    name: 'Diet Pepsi 591 ml',
+    category: 'Beverages',
+    price: 2.49,
+    image: '/images/Pepsi-diet591.jpg',
+    details: {},
   }, 
+
+  {
+    name: 'Root Bear 591',
+    category: 'Beverages',
+    price: 2.49,
+    image: '/images/Root-Beer591.jpg',
+    details: {},
+  }, 
+  {
+    name: 'Water Bottle',
+    category: 'Beverages',
+    price: 1.25,
+    image: '/images/water.jpg',
+    details: {},
+  }, 
+  {
+    name: 'Chocolate milk',
+    category: 'Beverages',
+    price: 2.99,
+    image: '/images/chocolatemilk.jpg',
+    details: {},
+  }, 
+
+
+
   
     {
       
@@ -241,29 +347,32 @@ const products = [
     category: 'Sides',
     price: 0,
     image: '/images/sides.jpg',
-    details: {},
+    details: {}
+      
+    ,
   },
   {
     name: 'Potato Wedges',
     category: 'Sides',
     price: 4.99,
     image: '/images/sides.jpg',
-    details: {    
+    details: {
+      
     },
   },
   {
     name: 'Garlic Bread',
     category: 'Sides',
-    price: 4.99,
+    price: 5.99,
     image: '/images/Garlicbread.jpg',
     details: {
      
     },
   },
   {
-    name: 'Garlic Fingers',
+    name: ' medium Garlic Fingers',
     category: 'Sides',
-    price: 5.99,
+    price: 8.99,
     image: '/images/garlicfingers.jpg',
     details: {
       
@@ -277,6 +386,16 @@ const products = [
     details: {
      
     },
+  },
+{
+    name: 'French Fries',
+    category: 'Sides',
+    price: 5.99,
+    image: '/images/Frenchfries.jpg',
+    details: {
+     
+    },
+
   },
   {
     name: 'Ranch Dip',
