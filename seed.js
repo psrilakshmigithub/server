@@ -134,7 +134,7 @@ const products = [
     name: 'Two for One Pizza Deal',
     category: 'TwoforOneDeals',
     price: 29.99,
-    image: '/images/two_for_one.jpg',
+    image: '/images/2for1pizza.jpg',
     details: {
       pizzas: 2,
       toppingsPerPizza: 3,
@@ -154,7 +154,7 @@ const products = [
     name: 'Three for One Pizza Deal',
     category: 'ThreeforOneDeals',
     price: 39.99,
-    image: '/images/three_for_one.jpg',
+    image: '/3for1pizzadeal.jpg',
     details: {
       pizzas: 3,
       toppingsPerPizza: 3,
@@ -315,6 +315,31 @@ const products = [
     image: '/images/Root-Beer591.jpg',
     details: {},
   }, 
+
+  {
+    name: 'Arizona Mango',
+    category: 'Beverages',
+    price: 2.99,
+    image: '/images/Arizona-mango.jpg',
+    details: {},
+  }, 
+
+  {
+    name: 'Arizona Water melon',
+    category: 'Beverages',
+    price: 2.99,
+    image: '/images/arizonawater.jpg',
+    details: {},
+  }, 
+
+  {
+    name: 'Peace Iced Tea',
+    category: 'Beverages',
+    price: 2.49,
+    image: '/images/peace iced tea.jpg',
+    details: {},
+  }, 
+
   {
     name: 'Water Bottle',
     category: 'Beverages',
@@ -330,9 +355,6 @@ const products = [
     details: {},
   }, 
 
-
-
-  
     {
       
       name: 'Beverages',
@@ -354,7 +376,7 @@ const products = [
   {
     name: 'Potato Wedges',
     category: 'Sides',
-    price: 4.99,
+    price: 5.99,
     image: '/images/sides.jpg',
     details: {
       
@@ -370,7 +392,7 @@ const products = [
     },
   },
   {
-    name: ' medium Garlic Fingers',
+    name: 'Garlic Fingers',
     category: 'Sides',
     price: 8.99,
     image: '/images/garlicfingers.jpg',
@@ -388,10 +410,10 @@ const products = [
     },
   },
 {
-    name: 'French Fries',
+    name: 'Poutine Fries',
     category: 'Sides',
     price: 5.99,
-    image: '/images/Frenchfries.jpg',
+    image: '/images/Poutine.jpg',
     details: {
      
     },
