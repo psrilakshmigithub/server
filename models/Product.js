@@ -14,8 +14,12 @@ const productSchema = new mongoose.Schema({
     extraToppingPrice: Number, // Price for extra toppings
     sizes: [String], // Sizes available for the item
     sizePrices: { type: Map, of: Number }, // Price adjustment for sizes
+    sizeDescriptions: { type: Map, of: String }, // Description for each size
     Flavors: [String], // General flavor options for non-pizza items
+    
   },
+  description: { type: String, required: false, default: '' },
+  
 });
 
 module.exports = mongoose.model('Product', productSchema);

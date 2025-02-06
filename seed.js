@@ -58,19 +58,21 @@ const products = [
         '45 pcs': 28,       
         '50 pcs': 32,  
         
-      },
-      wingsFlavors: ['Mild', 'Hot', 'Medium', 'Honey Garlic'],
+      },     
+      wingsFlavors: ['Mild', 'Hot', 'Medium', 'Honey Garlic','Sweet Chili'],
     },
+    description:'Wings with your choice of flavor.'
   },
   {
     name: 'Super Bowl Wings Combo Deal',
     category: 'superbowlcombo',
-    price: 89.99,
-    image: '/images/spicy_wings.jpg',
+    price: 79.99,
+    image: '/images/honey_garlic_wings.jpg',
     details: {    
       wingsFlavors: ['Mild', 'Hot', 'Medium', 'Honey Garlic','Sweet Chili'],
       sides: ['Potato Wedges','French Fries'],   
     },
+    description: 'Includes 80 Wings, 1 Large Fries/Wedges, 1 Large Garlic Finger',
   },
   {
   name: 'Pizza & Wings Combo',
@@ -80,16 +82,55 @@ const products = [
   details: {
     pizzas: 1,
     wingsFlavors: ['Mild', 'Hot', 'Medium', 'Honey Garlic','Sweet Chili'],
-    sides: ['Garlic Bread','Potato Wedges','Garlic Fingers','French Fries'],
+    sides: ['Garlic Bread','Potato Wedges','Ceasar Salad','French Fries'],
     drinks: [],
     toppingsPerPizza: 3,
     extraToppingPrice: 1.75,
     sizes: ['Small', 'Medium', 'Large','ExtraLarge'],
     sizePrices: {
       Small: 0,
-      Medium: 5,
-      Large: 10,
-      ExtraLarge: 15
+      Medium: 3,
+      Large: 5,
+      ExtraLarge: 8
+    },   
+    sizeDescriptions: {
+      Small: 'Includes 1 Pizza - 3 toppings, 12 Wings, 2 pops, and 1 Side.',
+      Medium: 'Includes 1 Pizza - 3 toppings, 15 Wings, 3 pops, and 1 Side.',
+      Large: 'Includes 1 Pizza - 3 toppings, 15 Wings, 4 pops, and 1 Side.',
+      ExtraLarge: 'Includes 1 Pizza - 3 toppings, 15 Wings, 4 pops, and 1 Side.'
+    },
+    beverages: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Beverage',
+      },
+    ]
+  },
+  
+},
+{
+  name: 'Mega Deal Combo',
+  category: 'MegaDealCombo',
+  price: 38.99,
+  image: '/images/large_pizza_combo.jpg',
+  details: {
+    pizzas: 3,
+    wingsFlavors: ['Mild', 'Hot', 'Medium', 'Honey Garlic','Sweet Chili'],
+    sides: ['Garlic Bread','Potato Wedges','Ceasar Salad','French Fries'],
+    drinks: [],
+    toppingsPerPizza: 3,
+    extraToppingPrice: 1.75,
+    sizes: ['Small', 'Medium', 'Large'],
+    sizePrices: {
+      Small: 0,
+      Medium: 10,
+      Large: 24,     
+    },   
+    sizeDescriptions: {
+      Small: 'Includes 3 Pizza - 3 toppings on each, 15 Wings, 2 litre Pepsi, 1 Side.',
+      Medium: 'Includes 3 Pizza - 3 toppings on each, 20 Wings, 2 litre Pepsi, 1 Side.',
+      Large: 'Includes 3 Pizza - 3 toppings on each, 30 Wings, 2 litre Pepsi, 1 Side.',
+     
     },
     beverages: [
       {
@@ -99,26 +140,32 @@ const products = [
     ]
   },
 },
- 
   {
     name: 'Two Pizzas Family Combo',
     category: 'FamilyCombos',
-    price: 39.99,
+    price: 32.99,
     image: '/images/family_combo.jpg',
     details: {
       pizzas: 2,
       wingsFlavors: ['Mild', 'Hot','Medium', 'Honey Garlic','Sweet Chili'],
-      sides: ['Garlic Bread','Potato Wedges','Garlic Fingers','French Fries'],
+      sides: ['Garlic Bread','Potato Wedges','Ceasar Salad','French Fries'],
       drinks: [],
       toppingsPerPizza: 3,
       extraToppingPrice: 1.75,
       sizes: ['Small', 'Medium', 'Large','ExtraLarge'],
       sizePrices: {
         Small: 0,
-        Medium: 5,
-        Large: 10,
-        ExtraLarge: 15
-      },
+        Medium: 8,
+        Large: 16,
+        ExtraLarge: 24
+      },  
+   
+    sizeDescriptions: {
+      Small: 'Includes 2 Pizzas(3 toppings on each), 15 Wings, 4 cans of pop, 1 Side.',
+      Medium: 'Includes 2 Pizzas(3 toppings on each), 20 Wings, 4 cans of pop, 1 Side.',
+      Large: 'Includes 2 Pizzas(3 toppings on each), 25 Wings, 4 cans of pop, 1 Side.',
+      ExtraLarge: 'Includes 2 Pizzas(3 toppings on each), 30 Wings, 4 cans of pop, 1 Side.'
+    },
       beverages: [
         {
           type: mongoose.Schema.Types.ObjectId,
@@ -133,7 +180,7 @@ const products = [
   {
     name: 'Two for One Pizza Deal',
     category: 'TwoforOneDeals',
-    price: 29.99,
+    price: 18.99,
     image: '/images/two_for_one.jpg',
     details: {
       pizzas: 2,
@@ -142,18 +189,20 @@ const products = [
       sizes: ['Small', 'Medium', 'Large','ExtraLarge'],
       sizePrices: {
         Small: 0,
-        Medium: 5,
-        Large: 10,
-        ExtraLarge: 15
+        Medium: 4,
+        Large: 8,
+        ExtraLarge: 10
       },
+       
     },
+    description: 'Includes 2 pizzas with 3 toppings on each pizza.',
   },
 
   // Three-for-One Deals
   {
     name: 'Three for One Pizza Deal',
     category: 'ThreeforOneDeals',
-    price: 39.99,
+    price: 26.99,
     image: '/images/three_for_one.jpg',
     details: {
       pizzas: 3,
@@ -163,23 +212,27 @@ const products = [
       sizePrices: {
         Small: 0,
         Medium: 5,
-        Large: 10,
-        ExtraLarge: 15
+        Large: 12,
+        ExtraLarge: 16
       },
+      
     },
+    description: 'Includes 3 pizzas with 3 toppings on each pizza.',
   },
 
   // Panzerotte
   {
-    name: 'Panzerotte',
-    category: 'Panzerotte',
-    price: 13.99,
+    name: 'Panzerottis',
+    category: 'panzerotti',
+    price: 18.99,
     image: '/images/panzerotti.jpg',
     details: {      
       Flavors: ['Cheese', 'Classic'],
       toppingsPerPizza: 3,
-      extraToppingPrice: 1.75,
+      extraToppingPrice: 1.75,       
+
     },
+    description: 'Includes 2 panzerotti with 3 toppings on each and 2 dips',
   },
 
   // Beverages

@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const User = require('../models/user');
+const User = require('../models/User');
 
 // Add a new contact
 
@@ -46,6 +46,47 @@ router.get('/:userId/contacts', async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch contacts.' });
   }
 });
+
+
+// Update the default contact's phone number
+// PUT route to update default contact's phone number
+router.put('/:userId/contacts/default/:phone', async (req, res) => {
+  try {
+    const { userId, phone } = req.params; // Get userId and phone from URL params
+
+    if (!phone) {
+      return res.status(400).json({ error: 'Phone number is required.' });
+    }
+
+    // Find the user by ID
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).json({ error: 'User not found.' });
+
+    // Check if the user has a default contact
+    let defaultContact = user.contacts.find((contact) => contact.isDefault);
+
+    // If no default contact exists, create one
+    if (!defaultContact) {
+      defaultContact = { phone, isDefault: true };
+      user.contacts.push(defaultContact); // Add the new default contact to the user's contacts
+    } else {
+      // If default contact exists, update the phone number
+      defaultContact.phone = phone;
+    }
+
+    // Save the updated user data
+    await user.save();
+
+    res.status(200).json(defaultContact); // Return the updated default contact
+  } catch (error) {
+    console.error('Error updating default contact phone:', error.message);
+    res.status(500).json({ error: 'Failed to update default contact phone.' });
+  }
+});
+
+
+
+
 
 // Update a contact
 router.put('/:userId/contacts/:contactId', async (req, res) => {

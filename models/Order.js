@@ -19,6 +19,7 @@ const orderSchema = new mongoose.Schema({
       priceByQuantity: { type: Number, required: true },
       quantity: { type: Number, required: true },
       totalPrice: { type: Number, required: true },
+      description: { type: String, required: false },
     },
   ],
   deliveryType: { type: String, enum: ['pickup', 'delivery'], required: true },

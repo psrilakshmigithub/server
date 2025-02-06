@@ -97,7 +97,7 @@ router.post("/accept", async (req, res) => {
 
     const userSSE = req.sseClients.get(acceptOrder.userId.toString());
     if (userSSE) {
-      userSSE.write(`data: ${JSON.stringify({ type: 'order-confirmed', orderId })}\n\n`);
+      userSSE.write(`data: ${JSON.stringify({ type: 'order-accepted',time: preparationTime ,orderId })}\n\n`);
       userSSE.end(); // Close SSE connection after sending confirmation
     }
   } catch (error) {
@@ -119,12 +119,12 @@ console.error
     declineOrder.reason = reason;
     await declineOrder.save();
 
-    res.status(200).json({ message: 'Order declined!', declineOrder });
+    res.status(200).json({ message: 'Order declined!' ,declineOrder });
 // ✅ Notify User via SSE
 
 const userSSE = req.sseClients.get(declineOrder.userId.toString());
 if (userSSE) {
-  userSSE.write(`data: ${JSON.stringify({ type: 'order-confirmed', orderId })}\n\n`);
+  userSSE.write(`data: ${JSON.stringify({ type: 'order-declined',reason: reason ,orderId })}\n\n`);
   userSSE.end(); // Close SSE connection after sending confirmation
 }
     
@@ -274,7 +274,7 @@ router.get('/missed', async (req, res) => {
 router.get('/:userId', async (req, res) => {
   try {
     const { userId } = req.params;
-    const orders = await Order.find({ userId }).populate('items.productId');
+    const orders = await Order.find({ userId }).populate('items.productId').sort({ createdAt: -1 }); // Sort by date in descending order;
     console.log("orders",orders);
     res.status(200).json(orders);
   } catch (error) {

@@ -8,9 +8,10 @@ const authRoutes = require("./routes/authRoutes");
 const http = require("http");
 const { WebSocketServer } = require("ws");
 const server = http.createServer(app);
-const wss = new WebSocketServer({ server });
+const wss = new WebSocketServer({ server, host: '0.0.0.0' });
 const sseClients = new Map();
 // ✅ WebSocket for Admin (Live Orders)
+//const wss = new WebSocket.Server({ port: 5000 });
 wss.on("connection", (ws) => {
   console.log("New admin connected");
 
@@ -94,4 +95,4 @@ app.use("/api/user", userRoutes);
 app.use("/api/payment", paymentRoutes);
 
 const PORT = 5000;
-server.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+server.listen(PORT, () => console.log(`Server running on port ${PORT}`));

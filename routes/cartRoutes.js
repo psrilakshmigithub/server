@@ -18,7 +18,8 @@ router.post('/', async (req, res) => {
       toppings,
       quantity,
       priceByQuantity,
-      totalPrice
+      totalPrice,
+      description
     } = req.body;
 
     console.log('Cart Payload Received:', {
@@ -31,7 +32,8 @@ router.post('/', async (req, res) => {
       toppings,
       quantity,
       priceByQuantity,
-      totalPrice
+      totalPrice,
+      description
     });
 
     if (!userId || (!productId && (!drinks || drinks.length === 0))) {
@@ -74,6 +76,7 @@ router.post('/', async (req, res) => {
           quantity: drink.quantity,
           priceByQuantity,
           totalPrice,
+          description
         });
       });
     }
@@ -124,6 +127,7 @@ router.post('/', async (req, res) => {
         quantity: quantity || 1,
         priceByQuantity,
         totalPrice,
+        description
       };
 
       cartItems.push(mainCartItem);
@@ -183,7 +187,8 @@ router.post('/merge-cart', async (req, res) => {
         toppings,
         quantity,
         priceByQuantity,
-        totalPrice
+        totalPrice,
+        description
       } = item;
 
       // Handle beverages separately
@@ -218,6 +223,7 @@ router.post('/merge-cart', async (req, res) => {
             quantity: drink.quantity,
             priceByQuantity,
             totalPrice,
+            description
           });
         });
 
@@ -272,6 +278,7 @@ router.post('/merge-cart', async (req, res) => {
           quantity: quantity || 1,
           priceByQuantity,
           totalPrice,
+          description
         };
 
         mergedCartItems.push(cartItem);
