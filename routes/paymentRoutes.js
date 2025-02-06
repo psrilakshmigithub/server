@@ -1,7 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const Order = require('../models/Order');
-const stripe = require('stripe')('sk_test_51QjvRCBpoKRfd7wJLjZzoIYDXy2zf8qEL1QuEEAL4lUNYc9aZck3CyaHTVrvpxzLW5Scl0NfP2TURtltOSJ81D5P00uf61wd7K'); // Replace with your Stripe secret key
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY); // Use the secret key from the .env file
+
 
 // Create a Payment Intent
 router.post('/create-payment-intent', async (req, res) => {

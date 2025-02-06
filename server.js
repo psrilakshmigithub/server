@@ -1,4 +1,5 @@
 const express = require("express");
+require('dotenv').config();
 const mongoose = require("mongoose");
 const cors = require("cors");
 const session = require("express-session");
@@ -8,12 +9,19 @@ const authRoutes = require("./routes/authRoutes");
 const http = require("http");
 const { WebSocketServer } = require("ws");
 const server = http.createServer(app);
-const wss = new WebSocketServer({ server, host: '0.0.0.0' });
+const HOST = process.env.HOST || '127.0.0.1'; // Default fallback
+const wss = new WebSocketServer({ server, host: HOST});
 const sseClients = new Map();
 // ✅ WebSocket for Admin (Live Orders)
 //const wss = new WebSocket.Server({ port: 5000 });
-wss.on("connection", (ws) => {
+wss.on("connection", (ws,req) => {
+  const token = req.url.split("?token=")[1];
   console.log("New admin connected");
+  if (token !== process.env.ADMIN_SECRET_KEY) {
+    ws.close();  // Reject unauthorized connection
+    return;
+}
+  //ws.send(JSON.stringify({ message: "Connected to Order Updates" }));
 
   ws.on("message", (message) => {
     console.log(`Received WebSocket message => ${message}`);
@@ -44,7 +52,7 @@ const paymentRoutes = require("./routes/paymentRoutes.js");
 
 app.use(express.json());
 app.use(cors());
-app.use(session({ secret: "your_session_secret", resave: false, saveUninitialized: false }));
+app.use(session({ secret: process.env.SESSION_SECRET, resave: false, saveUninitialized: false }));
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -73,7 +81,7 @@ app.get("/api/orders/sse", (req, res) => {
 
 
 mongoose
-  .connect("mongodb+srv://srilakshmipasupuleti:sri123@cluster0.qilmkdx.mongodb.net/pizza_store", {
+  .connect(process.env.MONGODB_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
@@ -94,5 +102,5 @@ app.use("/api/auth", authRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/payment", paymentRoutes);
 
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => console.log(`Server running on port ${PORT}`));

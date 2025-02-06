@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
 const router = express.Router();
-const JWT_SECRET = 'your_jwt_secret'; // Use environment variables in production
+const JWT_SECRET = process.env.JWT_SECRET; // Use environment variables in production
 
 // Google Authentication
 router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
@@ -23,7 +23,7 @@ router.get(
         await user.save();
       }
       const token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: '1h' });
-      res.redirect(`http://localhost:3000?token=${token}`);
+      res.redirect(`${process.env.REACT_APP_FRONTEND_URL}?token=${token}`);
     } catch (error) {
       console.error('Google Auth Error:', error.message);
       res.status(500).send('Authentication failed');
@@ -48,7 +48,7 @@ router.get(
         await user.save();
       }
       const token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: '1h' });
-      res.redirect(`http://localhost:3000?token=${token}`);
+      res.redirect(`${process.env.REACT_APP_FRONTEND_URL}?token=${token}`);
     } catch (error) {
       console.error('Facebook Auth Error:', error.message);
       res.status(500).send('Authentication failed');
