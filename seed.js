@@ -49,14 +49,14 @@ const products = [
       sizes: ['10 pcs','15 pcs','20 pcs' ,'25 pcs','30 pcs','35 pcs','40 pcs','45 pcs','50 pcs'],   
       sizePrices: {
         '10 pcs': 0,
-        '15 pcs': 4,
-        '20 pcs': 8,
-        '25 pcs': 12,
-        '30 pcs': 16,
-        '35 pcs': 20,
-        '40 pcs': 24,
-        '45 pcs': 28,       
-        '50 pcs': 32,  
+        '15 pcs': 5,
+        '20 pcs': 10,
+        '25 pcs': 14,
+        '30 pcs': 18,
+        '35 pcs': 22,
+        '40 pcs': 27,
+        '45 pcs': 32,       
+        '50 pcs': 36,  
         
       },     
       wingsFlavors: ['Mild', 'Hot', 'Medium', 'Honey Garlic','Sweet Chili'],
@@ -368,6 +368,31 @@ const products = [
     image: '/images/Root-Beer591.jpg',
     details: {},
   }, 
+
+  {
+    name: 'Arizona Mango',
+    category: 'Beverages',
+    price: 2.99,
+    image: '/images/Arizona-mango.jpg',
+    details: {},
+  }, 
+
+  {
+    name: 'Arizona Water melon',
+    category: 'Beverages',
+    price: 2.99,
+    image: '/images/arizonawater.jpg',
+    details: {},
+  }, 
+
+  {
+    name: 'Peace Iced Tea',
+    category: 'Beverages',
+    price: 2.49,
+    image: '/images/peace iced tea.jpg',
+    details: {},
+  }, 
+
   {
     name: 'Water Bottle',
     category: 'Beverages',
@@ -383,9 +408,6 @@ const products = [
     details: {},
   }, 
 
-
-
-  
     {
       
       name: 'Beverages',
@@ -407,7 +429,7 @@ const products = [
   {
     name: 'Potato Wedges',
     category: 'Sides',
-    price: 4.99,
+    price: 5.99,
     image: '/images/sides.jpg',
     details: {
       
@@ -423,7 +445,7 @@ const products = [
     },
   },
   {
-    name: ' medium Garlic Fingers',
+    name: 'Garlic Fingers',
     category: 'Sides',
     price: 8.99,
     image: '/images/garlicfingers.jpg',
@@ -441,10 +463,10 @@ const products = [
     },
   },
 {
-    name: 'French Fries',
+    name: 'Poutine Fries',
     category: 'Sides',
     price: 5.99,
-    image: '/images/Frenchfries.jpg',
+    image: '/images/Poutine.jpg',
     details: {
      
     },
