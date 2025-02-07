@@ -102,6 +102,8 @@ app.use("/api/toppings", toppingsRoute);
 app.use("/api/auth", authRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/payment", paymentRoutes);
-
+app.get("/", (req, res) => {
+  res.send("Welcome to the Pizza Store API! 🚀");
+});
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
