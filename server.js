@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const session = require("express-session");
 const passport = require("passport");
+const bcrypt = require('bcryptjs');
 const app = express();
 const authRoutes = require("./routes/authRoutes");
 const http = require("http");

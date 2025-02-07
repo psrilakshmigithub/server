@@ -1,6 +1,5 @@
 {
   "dependencies": {
-    "bcrypt": "^5.1.1",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
@@ -17,9 +16,9 @@
     "ws": "^8.18.0"
   },
   "scripts": {
-  "start": "node server.js"
-},
-"engines": {
-  "node": "18.x"
-}
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": "18.x"
+  }
 }
