@@ -17,11 +17,19 @@ const sseClients = new Map();
 //const wss = new WebSocket.Server({ port: 5000 });
 wss.on("connection", (ws,req) => {
   const token = req.url.split("?token=")[1];
-  console.log("New admin connected");
   if (token !== process.env.ADMIN_SECRET_KEY) {
     ws.close();  // Reject unauthorized connection
     return;
 }
+  console.log("New admin connected");
+  const pingInterval = setInterval(() => {
+    ws.ping();
+  }, 30000); // Ping every 30 seconds
+    // Listen for pong from the client
+    ws.on('pong', () => {
+      console.log('Pong received from client');
+    });
+ 
   //ws.send(JSON.stringify({ message: "Connected to Order Updates" }));
 
   ws.on("message", (message) => {
@@ -29,6 +37,7 @@ wss.on("connection", (ws,req) => {
   });
 
   ws.on("close", () => {
+    clearInterval(pingInterval);
     console.log("Admin disconnected");
   });
 });

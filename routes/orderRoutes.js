@@ -56,7 +56,9 @@ router.post('/complete-order', async (req, res) => {
 
     // ✅ WebSocket Notification for Admins
     if (req.wss && req.wss.clients) {
+      console.log('🚀 Sending WebSocket notification to clients:', req.wss.clients.size);
       req.wss.clients.forEach(client => {
+        console.log('🚀 WebSocket Client:', client.readyState);
         if (client.readyState === WebSocket.OPEN) {
           client.send(JSON.stringify(order));
         }
