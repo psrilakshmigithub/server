@@ -1,4 +1,8 @@
 const express = require("express");
+const { WebSocketServer } = require("ws");
+const server = http.createServer(app);
+const HOST = process.env.HOST || '127.0.0.1'; // Default fallback
+const wss = new WebSocketServer({ server, host: HOST});
 require('dotenv').config();
 const mongoose = require("mongoose");
 const cors = require("cors");
@@ -8,10 +12,6 @@ const bcrypt = require('bcryptjs');
 const app = express();
 const authRoutes = require("./routes/authRoutes");
 const http = require("http");
-const { WebSocketServer } = require("ws");
-const server = http.createServer(app);
-const HOST = process.env.HOST || '127.0.0.1'; // Default fallback
-const wss = new WebSocketServer({ server, host: HOST});
 const sseClients = new Map();
 // ✅ WebSocket for Admin (Live Orders)
 //const wss = new WebSocket.Server({ port: 5000 });

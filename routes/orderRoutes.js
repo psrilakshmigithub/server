@@ -1,4 +1,5 @@
 const express = require('express');
+const WebSocket = require('ws');  // Import WebSocket here
 const router = express.Router();
 const Order = require('../models/Order');
 const User = require('../models/User');
